@@ -75,13 +75,8 @@ controller.on('rtm_close', function (bot) {
     // you may want to attempt to re-open
 });
 
-controller.hears(['[Gg]eneral \\w+'], 'ambient', function(bot, message) {
-    var messagestring = message.match.toString().toLowerCase().split(' ');
-    for (var i = 0; i < messagestring.length; i++) {
-        messagestring[i] = messagestring[i].charAt(0).toUpperCase() + messagestring[i].slice(1);
-    }
-    messagestring.join(' ');
-    bot.reply(message, messagestring + "! *SALUTES*");
+controller.hears(['[Gg]eneral \\w+', '[Mm]ajor \\w+'], 'ambient', function(bot, message) {
+    bot.reply(message, message.match + "! *SALUTES*");
 });
 
 
