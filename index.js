@@ -75,18 +75,13 @@ controller.on('rtm_close', function (bot) {
     // you may want to attempt to re-open
 });
 
-
-/**
- * Core bot logic goes here!
- */
-// BEGIN EDITING HERE!
-
-controller.on('bot_channel_join', function (bot, message) {
-    bot.reply(message, "I'm here!")
-});
-
-controller.hears('hello', 'direct_message', function (bot, message) {
-    bot.reply(message, 'Hello!');
+controller.hears(['[Gg]eneral \\w+'], 'ambient', function(bot, message) {
+    var messagestring = message.match.toString().toLowerCase().split(' ');
+    for (var i = 0; i < messagestring.length; i++) {
+        messagestring[i] = messagestring[i].charAt(0).toUpperCase() + messagestring[i].slice(1);
+    }
+    messagestring.join(' ');
+    bot.reply(message, messagestring + "! *SALUTES*");
 });
 
 
