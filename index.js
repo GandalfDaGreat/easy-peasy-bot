@@ -65,6 +65,9 @@ if (process.env.TOKEN || process.env.SLACK_TOKEN) {
  *
  * TODO: fixed b0rked reconnect behavior
  */
+
+var titleCase = require('title-case');
+
 // Handle events related to the websocket connection to Slack
 controller.on('rtm_open', function (bot) {
     console.log('** The RTM api just connected!');
@@ -76,7 +79,8 @@ controller.on('rtm_close', function (bot) {
 });
 
 controller.hears(['[Gg]eneral \\w+', '[Mm]ajor \\w+'], 'ambient', function(bot, message) {
-    bot.reply(message, message.match + "! *SALUTES*");
+    msString = titleCase(message.match.toString());
+    bot.reply(message, msString + "! *SALUTES*");
 });
 
 
