@@ -3,6 +3,7 @@
  */
 
 
+
 /**
  * Define a function for initiating a conversation on installation
  * With custom integrations, we don't have a way to find out who installed us, so we can't message them :(
@@ -19,6 +20,10 @@ function onInstallation(bot, installer) {
             }
         });
     }
+}
+
+function start_rtm() {
+
 }
 
 
@@ -85,6 +90,23 @@ controller.hears(['[Gg]eneral \\w+', '[Mm]ajor \\w+'], 'ambient', function(bot, 
     bot.reply(message, msString + "! *SALUTES*");
 });
 
+controller.on('rtm_close', function (token, config, onInstallation) {
+    var bot = controller.spawn({
+        token: token
+    });
+
+
+    bot.startRTM(function (err, bot, payload) {
+
+        if (err) {
+            die(err);
+        }
+
+        if(onInstallation) onInstallation(bot);
+
+    });
+
+});
 
 /**
  * AN example of what could be:
