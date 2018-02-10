@@ -26,15 +26,15 @@ function onInstallation(bot, installer) {
  * Configure the persistence options
  */
 
-var config = {};
+var config = {retry: 10};
 if (process.env.MONGOLAB_URI) {
     var BotkitStorage = require('botkit-storage-mongo');
     config = {
-        storage: BotkitStorage({mongoUri: process.env.MONGOLAB_URI}),
+        storage: BotkitStorage({mongoUri: process.env.MONGOLAB_URI})
     };
 } else {
     config = {
-        json_file_store: ((process.env.TOKEN)?'./db_slack_bot_ci/':'./db_slack_bot_a/'), //use a different name if an app or CI
+        json_file_store: ((process.env.TOKEN)?'./db_slack_bot_ci/':'./db_slack_bot_a/') //use a different name if an app or CI
     };
 }
 
@@ -76,6 +76,12 @@ controller.on('rtm_open', function (bot) {
 controller.on('rtm_close', function (bot) {
     console.log('** The RTM api just closed');
     // you may want to attempt to re-open
+});
+
+controller.on('goodbye', function(bot) {
+    bot.startPrivateConversation({user: "jac5258@rit.edu"}, function(err, conversation) {
+        conversation.say('I don\'t wanna go!');
+    });
 });
 
 controller.hears(['[Gg]eneral \\w+', '[Mm]ajor \\w+'], 'ambient', function(bot, message) {
