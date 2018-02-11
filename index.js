@@ -77,7 +77,7 @@ controller.on('rtm_close', function (bot) {
     console.log('** The RTM api just closed');
     bot.startRTM(function(err) {
         if (err) {
-            die(err);
+            console.log('Could not reconnect')
         }
         console.log('RTM connection started');
     });
