@@ -41,12 +41,13 @@ if (process.env.MONGOLAB_URI) {
 /**
  * Are being run as an app or a custom integration? The initialization will differ, depending
  */
-
+var token = null;
+var controller = null;
 if (process.env.TOKEN || process.env.SLACK_TOKEN) {
     //Treat this as a custom integration
     var customIntegration = require('./lib/custom_integrations');
-    var token = (process.env.TOKEN) ? process.env.TOKEN : process.env.SLACK_TOKEN;
-    var controller = customIntegration.configure(token, config, onInstallation);
+    token = (process.env.TOKEN) ? process.env.TOKEN : process.env.SLACK_TOKEN;
+    controller = customIntegration.configure(token, config, onInstallation);
 } else if (process.env.CLIENT_ID && process.env.CLIENT_SECRET && process.env.PORT) {
     //Treat this as an app
     var app = require('./lib/apps');
@@ -75,12 +76,8 @@ controller.on('rtm_open', function (bot) {
 
 controller.on('rtm_close', function (bot) {
     console.log('** The RTM api just closed');
-    bot.startRTM(function(err) {
-        if (err) {
-            console.log('Could not reconnect')
-        }
-        console.log('RTM connection started');
-    });
+    controller = customIntegration.configure(token, config, onInstallation);
+    console.log('attempting to reconnect');
 });
 
 controller.hears(['[Gg]eneral \\w+', '[Mm]ajor \\w+'], 'ambient', function(bot, message) {
