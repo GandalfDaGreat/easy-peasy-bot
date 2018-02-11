@@ -75,12 +75,11 @@ controller.on('rtm_open', function (bot) {
 
 controller.on('rtm_close', function (bot) {
     console.log('** The RTM api just closed');
-    // you may want to attempt to re-open
-});
-
-controller.on('goodbye', function(bot) {
-    bot.startPrivateConversation({user: "jac5258@rit.edu"}, function(err, conversation) {
-        conversation.say('I don\'t wanna go!');
+    bot.startRTM(function(err) {
+        if (err) {
+            die(err);
+        }
+        console.log('RTM connection started');
     });
 });
 
