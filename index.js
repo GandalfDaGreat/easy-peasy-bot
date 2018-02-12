@@ -35,16 +35,6 @@ function start_rtm() {
 
 var config = {retry: 10};
 if (process.env.MONGOLAB_URI) {
-<<<<<<< HEAD
-    var BotkitStorage = require('botkit-storage-mongo');
-    config = {
-        storage: BotkitStorage({mongoUri: process.env.MONGOLAB_URI})
-    };
-} else {
-    config = {
-        json_file_store: ((process.env.TOKEN)?'./db_slack_bot_ci/':'./db_slack_bot_a/') //use a different name if an app or CI
-    };
-=======
   var BotkitStorage = require('botkit-storage-mongo');
   config = {
     storage: BotkitStorage({mongoUri: process.env.MONGOLAB_URI}),
@@ -53,7 +43,6 @@ if (process.env.MONGOLAB_URI) {
   config = {
     json_file_store: ((process.env.TOKEN) ? './db_slack_bot_ci/' : './db_slack_bot_a/'), //use a different name if an app or CI
   };
->>>>>>> c6a7260e79d503167024361adf38aa402410b8f5
 }
 
 /**
@@ -62,18 +51,11 @@ if (process.env.MONGOLAB_URI) {
 var token = null;
 var controller = null;
 if (process.env.TOKEN || process.env.SLACK_TOKEN) {
-<<<<<<< HEAD
-    //Treat this as a custom integration
-    var customIntegration = require('./lib/custom_integrations');
-    token = (process.env.TOKEN) ? process.env.TOKEN : process.env.SLACK_TOKEN;
-    controller = customIntegration.configure(token, config, onInstallation);
-=======
   //Treat this as a custom integration
   var customIntegration = require('./lib/custom_integrations');
   var token = (process.env.TOKEN) ? process.env.TOKEN : process.env.SLACK_TOKEN;  //OATH TOKEN, 'xoxp-****'
   controller = customIntegration.configure(token, config, onInstallation);
   console.log('running as a custom integration');
->>>>>>> c6a7260e79d503167024361adf38aa402410b8f5
 } else if (process.env.CLIENT_ID && process.env.CLIENT_SECRET && process.env.PORT) {
   //Treat this as an app
   wrapp = require('./lib/apps');
@@ -85,8 +67,7 @@ if (process.env.TOKEN || process.env.SLACK_TOKEN) {
 }
 
 
-<<<<<<< HEAD
-/**
+ /**
  * A demonstration for how to handle websocket events. In this case, just log when we have and have not
  * been disconnected from the websocket. In the future, it would be super awesome to be able to specify
  * a reconnect policy, and do reconnections automatically. In the meantime, we aren't going to attempt reconnects,
@@ -97,28 +78,19 @@ if (process.env.TOKEN || process.env.SLACK_TOKEN) {
 
 var titleCase = require('title-case');
 
-=======
->>>>>>> c6a7260e79d503167024361adf38aa402410b8f5
 // Handle events related to the websocket connection to Slack
 controller.on('rtm_open', function(bot) {
   console.log('** The RTM api just connected!');
 });
 
-<<<<<<< HEAD
-controller.on('rtm_close', function (bot) {
+
+controller.on('rtm_close', function(bot) {
     console.log('** The RTM api just closed');
-    controller = customIntegration.configure(token, config, onInstallation);
-    console.log('attempting to reconnect');
-});
+    wrapp.connectRTM(bot, config);
 
 controller.hears(['[Gg]eneral \\w+', '[Mm]ajor \\w+'], 'ambient', function(bot, message) {
     msString = titleCase(message.match.toString());
     bot.reply(message, msString + "! *SALUTES*");
-=======
-controller.on('rtm_close', function(bot) {
-  console.log('** The RTM api just closed');
-  wrapp.connectRTM(bot, config);
->>>>>>> c6a7260e79d503167024361adf38aa402410b8f5
 });
 
 controller.on('rtm_close', function (token, config, onInstallation) {
@@ -126,62 +98,50 @@ controller.on('rtm_close', function (token, config, onInstallation) {
         token: token
     });
 
-<<<<<<< HEAD
-
-    bot.startRTM(function (err, bot, payload) {
-
-        if (err) {
-            die(err);
-        }
-
-        if(onInstallation) onInstallation(bot);
-
-    });
-
-=======
-/**
- * Core bot logic goes here!
- * NOTE 'url_verification' event only happens with PUSH events, not RTM, which this bot uses.
- */
+    /**
+     * Core bot logic goes here!
+     * NOTE 'url_verification' event only happens with PUSH events, not RTM, which this bot uses.
+     */
 // BEGIN EDITING HERE!
 
-controller.on('bot_channel_join', function(bot, msg) {
-  console.log('bot_channel_join', msg);
-  bot.reply(msg, "I'm here!");
-});
+    controller.on('bot_channel_join', function (bot, msg) {
+        console.log('bot_channel_join', msg);
+        bot.reply(msg, "I'm here!");
+    });
 
-controller.hears(['hello', 'hi', 'greetings', 'sup'], 'direct_message', function(bot, msg) {
-  console.log('hears', msg.text);
-  bot.reply(msg, 'Hello!');
-});
+    controller.hears(['hello', 'hi', 'greetings', 'sup'], 'direct_message', function (bot, msg) {
+        console.log('hears', msg.text);
+        bot.reply(msg, 'Hello!');
+    });
 
-controller.on('slash_command', function(bot, msg) {
-  console.log('handling', msg.command);
-  if (!isFromSlack(msg.token)){
-    console.log('message not from slack?', msg);
-    return;
-  }
+    controller.on('slash_command', function (bot, msg) {
+        console.log('handling', msg.command);
+        if (!isFromSlack(msg.token)) {
+            console.log('message not from slack?', msg);
+            return;
+        }
 
-  switch (msg.command) {
-    case '/f':
-      console.log('command /Q received');
-      if (!msg.text || msg.text === 'help') {
-        bot.replyPrivate(msg, 'I find things. Try typing `/f thing I want`.');
-        return;
-      }
-      bot.replyPublic(msg, '1', function() {
-        bot.replyPublicDelayed(msg, '2', function() {
-          // botkit not thennable yet: https://github.com/howdyai/botkit/issues/416
-          bot.replyPublicDelayed(msg, '3');
-        })
-      });
-      return;
-    default:
-      console.log('unknown command', msg.command);
-      bot.replyPublic(msg, 'I do not know how to ' + msg.command + ' yet.');
-  }
->>>>>>> c6a7260e79d503167024361adf38aa402410b8f5
-});
+        switch (msg.command) {
+            case '/f':
+                console.log('command /Q received');
+                if (!msg.text || msg.text === 'help') {
+                    bot.replyPrivate(msg, 'I find things. Try typing `/f thing I want`.');
+                    return;
+                }
+                bot.replyPublic(msg, '1', function () {
+                    bot.replyPublicDelayed(msg, '2', function () {
+                        // botkit not thennable yet: https://github.com/howdyai/botkit/issues/416
+                        bot.replyPublicDelayed(msg, '3');
+                    })
+                });
+                return;
+            default:
+                console.log('unknown command', msg.command);
+                bot.replyPublic(msg, 'I do not know how to ' + msg.command + ' yet.');
+        }
+    });
+
+}
 
 /**
  * AN example of what could be:
