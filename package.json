@@ -25,9 +25,13 @@
     "node": "5.1.1"
   },
   "dependencies": {
-    "botkit": "0.2.2",
+    "botkit": "0.5.2",
     "botkit-storage-mongo": "^1.0.2",
+<<<<<<< HEAD
     "mongodb": "^1.4.39",
     "title-case": "^2.1.1"
+=======
+    "mongodb": "^2.2.25"
+>>>>>>> c6a7260e79d503167024361adf38aa402410b8f5
   }
 }
